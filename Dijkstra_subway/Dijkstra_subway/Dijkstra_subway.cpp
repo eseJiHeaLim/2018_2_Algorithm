@@ -1,7 +1,17 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 
+/*
+//1. Dilkstra table 을 초기화 한다
+	(found=false , dist = infinite, prev)
+//2. 시작 ㅂvertex s에 대해서 
+	table[s].dist =0
+3. (table[i].found==false)&& minimum(table[i].dist)를 만족하는 vertex i를 찾아서
+4. table[i].founf=true
+5/ vertex [i] 의 neighbor vertex들에 대해서 dist 와 prev를 update (나를 통해 더 빠르게 갈수 있을 경우에만)
+6. 3번으로 반복 ... 더 이상 found == false 인 vertex가 없을때 까지 
 
+*/
 
 int main(void)
 {
