@@ -66,6 +66,11 @@ int checkVertex(char v)
 
 	while (1)
 	{
+		if (temp == 0)
+		{
+
+			return 0;
+		}
 		if (temp->v == v)
 		{
 			return 1;
@@ -189,7 +194,7 @@ struct vertex * findVertex(char v)
 
 	while (temp != 0)
 	{
-		if (temp->v)
+		if (temp->v==v)
 		{
 			return temp;
 		}
@@ -233,7 +238,7 @@ void initDijkstraTable(void)
 		dtable[i].vertex = temp->v;
 		temp = temp->next;
 		dtable[i].found = 0;
-		dtable[i].dist = 2000000000000;
+		dtable[i].dist = 20000;
 		dtable[i].prev = 0;
 	}
 }
@@ -302,7 +307,6 @@ void runDijkstra(char sVertex)
 			}
 			connectOnes = connectOnes->next;
 		}
-
 	}
 }
 
@@ -314,6 +318,7 @@ int main(void)
 	addEdge('B', 'C', 4);
 	addEdge('B', 'D', 5);
 	addEdge('C', 'D', 40);
+
 
 	// 이 함수를 사용하여 그래프로 저장
 	processEdge();
