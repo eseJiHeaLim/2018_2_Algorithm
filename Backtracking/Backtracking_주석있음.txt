@@ -1,0 +1,114 @@
+#include<stdio.h>
+
+#define SZ 16
+
+int chessBoard[SZ][SZ]; // initialized with 0 
+
+//내가 (i,j)에 있을때 ,
+//누군가 위에 있으면 1을 반환
+//			  없으면 0을 반환
+int checkUpside(int i, int j)
+{
+	//행을 올려가면서 , 위에  queen이 있는지를 검사
+	for (int k = i - 1; k >= 0; k--)
+	{
+		if (chessBoard[k][j] != 0)
+		{
+			return 1;
+		}
+	}
+	// 다 돌았는대도 내 위에 무언가 있다는것을 알아내지 못했을때 --> 내 위에 아무것도 없다
+	return 0;
+}
+
+//v의 절대값을 반환해주는 함수
+int makeAbsolute(int v)
+{
+	if (v < 0)
+	{
+		return -v;
+	}
+	return v;
+}
+
+// 내가 (i,j)에 있을 때.
+//대각선으로 위쪽 방향에 
+//누군가 있으면 1을 반환,
+//		 없으면 0을 반환
+//행과 열의 차이의 절대값이 같으면 대각선의 위치이다.
+int checkDiagonal(int _i, int _j)
+{
+	for (int i = 0; i <= _i - 1; i++)
+	{
+		for (int j = 0; j < SZ; j++) // 열이 움직임
+		{
+			//하나로 안 묶은 이유 : 불필요한 연산 방지
+			if (chessBoard[i][j] != 0)
+			{
+				if (makeAbsolute(i - _i) == makeAbsolute( j - _j))
+				{
+					return 1;
+				}
+				else
+				{
+					//queen을 찾았으니깐 나머지 열을 굳이 움직일 필요없이 다음으로 행으로 넘어가면 됨
+					break;
+				}
+			}
+		}
+	}
+
+	return 0; //대각선으로 위쪽으로 아무것도 없음
+}
+
+void showChessBoard()
+{
+
+	printf("---------------------------------------\n");
+
+	for (int i = 0; i < SZ; i++)
+	{
+		for (int j = 0; j < SZ; j++)
+		{
+			printf("%d ", chessBoard[i][j]);
+		}
+		printf("\n");
+	}
+}
+//
+// Queen이 있을 자리를 [row,0~SZ-1]까지 감사한다.
+//SZ-1인 이유 자기 자신을 불러냄
+//
+void doBacktracking(int row)
+{
+	for (int i = 0; i < SZ; i++)
+	{
+		if (checkDiagonal(row, i) == 0 && checkUpside(row, i) == 0)
+		{
+			//queen을 놓음
+			chessBoard[row][i] = 1;
+
+			if (row < SZ - 1)  // 아직 맨 밑바닥이 아님
+			{
+				doBacktracking(row + 1);
+			}
+			else   // 맨 마지막 줄에 도잘했으므로 , 체스판을 보여주고 종료
+			{
+				showChessBoard();
+
+			}
+			// 핵심 라인 
+			// 나오면서 지워져야 그 다음에 돌아가기 때문에 
+			chessBoard[row][i] = 0;
+			//*******************
+		}
+	}
+	
+}
+
+int main(void)
+{
+	doBacktracking(0); //0행부터 queen을 놓고 생각해본다.
+
+	return 0;
+}
