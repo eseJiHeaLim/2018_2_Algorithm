@@ -66,6 +66,11 @@ int checkVertex(char v)
 
 	while (temp!=0)
 	{
+		if (temp == 0)
+		{
+
+			return 0;
+		}
 		if (temp->v == v)
 		{
 			return 1;
@@ -230,7 +235,11 @@ void initDijkstraTable(void)
 		dtable[i].vertex = temp->v;
 		temp = temp->next;
 		dtable[i].found = 0;
+<<<<<<< HEAD
 		dtable[i].dist = 200000000;
+=======
+		dtable[i].dist = 20000;
+>>>>>>> f70008991dea1936e026d119207cb456e5e5bcab
 		dtable[i].prev = 0;
 	}
 }
@@ -299,7 +308,6 @@ void runDijkstra(char sVertex)
 			}
 			connectOnes = connectOnes->next;
 		}
-
 	}
 }
 
@@ -316,6 +324,7 @@ int main(void)
 	addEdge('B', 'D', 3);
 	addEdge('D', 'A', 2);
 	addEdge('D', 'C', 1);
+
 
 
 	// 이 함수를 사용하여 그래프로 저장
