@@ -1,4 +1,10 @@
 ﻿  graph_Dijkstra.cpp
+<<<<<<< HEAD
+c:\github\2018_2_algorithm\graph_dijkstra\graph_dijkstra\graph_dijkstra.cpp(195): warning C4715: 'findVertex': 모든 제어 경로에서 값을 반환하지는 않습니다.
+c:\github\2018_2_algorithm\graph_dijkstra\graph_dijkstra\graph_dijkstra.cpp(250): warning C4715: 'findVertexIndexFromDTable': 모든 제어 경로에서 값을 반환하지는 않습니다.
+  graph_Dijkstra.vcxproj -> C:\github\2018_2_Algorithm\graph_Dijkstra\Debug\graph_Dijkstra.exe
+=======
 d:\github\2018_2_algorithm\graph_dijkstra\graph_dijkstra\graph_dijkstra.cpp(203): warning C4715: 'findVertex': 모든 제어 경로에서 값을 반환하지는 않습니다.
 d:\github\2018_2_algorithm\graph_dijkstra\graph_dijkstra\graph_dijkstra.cpp(258): warning C4715: 'findVertexIndexFromDTable': 모든 제어 경로에서 값을 반환하지는 않습니다.
   graph_Dijkstra.vcxproj -> D:\github\2018_2_Algorithm\graph_Dijkstra\Debug\graph_Dijkstra.exe
+>>>>>>> f70008991dea1936e026d119207cb456e5e5bcab

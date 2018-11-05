@@ -130,6 +130,7 @@ void addEdgeMini(char src, char dst)
 		graph[idx] = new_one;
 		return;
 	}
+
 	struct node * temp = graph[idx];
 
 	while (temp->next != 0)

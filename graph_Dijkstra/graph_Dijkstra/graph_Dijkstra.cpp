@@ -64,7 +64,7 @@ int checkVertex(char v)
 {
 	struct vertex * temp = vertexs;
 
-	while (1)
+	while (temp!=0)
 	{
 		if (temp == 0)
 		{
@@ -75,12 +75,9 @@ int checkVertex(char v)
 		{
 			return 1;
 		}
-		if (temp->next == 0)
-		{
-			return 0;
-		}
 		temp = temp->next;
 	}
+	return 0;
 }
 
 void addVertex(char v)
@@ -238,7 +235,11 @@ void initDijkstraTable(void)
 		dtable[i].vertex = temp->v;
 		temp = temp->next;
 		dtable[i].found = 0;
+<<<<<<< HEAD
+		dtable[i].dist = 200000000;
+=======
 		dtable[i].dist = 20000;
+>>>>>>> f70008991dea1936e026d119207cb456e5e5bcab
 		dtable[i].prev = 0;
 	}
 }
@@ -312,20 +313,27 @@ void runDijkstra(char sVertex)
 
 int main(void)
 {
+	/*
 	//버택스 , 엣지에 개수를 모르므로 addEdge는 엣지에 대한 정보만을 계속 받아들임
 	addEdge('A', 'B', 8);
 	addEdge('A', 'C', 2);
 	addEdge('B', 'C', 4);
 	addEdge('B', 'D', 5);
 	addEdge('C', 'D', 40);
+	*/
+	addEdge('B', 'D', 3);
+	addEdge('D', 'A', 2);
+	addEdge('D', 'C', 1);
+
 
 
 	// 이 함수를 사용하여 그래프로 저장
 	processEdge();
 
+	
 	initDijkstraTable();
 
-	runDijkstra('A'); //시작 vertex A로 부터 dijkstra를 돌려봅시다. 이건 모든걸 다 찾는 거임
+	runDijkstra('D'); //시작 vertex A로 부터 dijkstra를 돌려봅시다. 이건 모든걸 다 찾는 거임
 
 	int c = howMAntVvertexs();
 	for (int i = 0; i < c; i++)
