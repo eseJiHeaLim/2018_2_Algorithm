@@ -28,8 +28,18 @@ struct Station
 	struct Station * next;
 };
 
+struct dijkstra
+{
+	char* vertex;
+	int found;
+	int dist;
+	char* prev;
+};
+
 struct Station * graph = 0;
 struct StationInfo * stations = 0;
+struct dijkstra * dtable = 0;
+
 
 void addStationNode(char * _stationId, char * _stationName, char * _lineNumber)
 {
@@ -42,17 +52,17 @@ void addStationNode(char * _stationId, char * _stationName, char * _lineNumber)
 	new_one->next = 0;
 	*/
 	//지하철역 이름만큼의 공간을 할당 받는다
-	new_one->stationId = (char *)malloc(strlen(_stationId)+1);
+	new_one->stationId = (char *)malloc(strlen(_stationId) + 1);
 	//할당된 공간에 _stationId를 복사한다
 	strcpy(new_one->stationId, _stationId); // new_one -> stationId에 _station의 값을 집어 넣는다. 이 아이는 널까지만 복사를 함
-	new_one->stationName = (char *)malloc(sizeof(_stationName)+1);
+	new_one->stationName = (char *)malloc(sizeof(_stationName) + 1);
 	strcpy(new_one->stationName, _stationName);
 	// _station의 값보다 new_one 안에 든값의 길이가 훠씬 타이트하게 작다
-	new_one->lineNumber = (char *)malloc(sizeof(_lineNumber)+1);
+	new_one->lineNumber = (char *)malloc(sizeof(_lineNumber) + 1);
 	strcpy(new_one->lineNumber, _lineNumber);
-	
+
 	new_one->next = 0;
-	
+
 
 	//SLL 붙이기
 	if (stations == 0)
@@ -74,7 +84,7 @@ void addStationNode(char * _stationId, char * _stationName, char * _lineNumber)
 struct Station * findStationFromGraph(char* _from)
 {
 	struct Station *temp = graph;
-	while (temp->next!=0)
+	while (temp != 0)
 	{
 		if (strcmp(temp->stationId, _from) == 0)
 		{
@@ -89,17 +99,18 @@ struct Station * findStationFromGraph(char* _from)
 void addEdgeToGraph(char* _fromStation, char * _toStation, int _distance)
 {
 	struct Station * cur = findStationFromGraph(_fromStation);
-	cur = (struct Station*)malloc(sizeof(struct Station));
-	cur->stationId = (char *)malloc(strlen(_fromStation) + 1);
-	strcpy(cur->stationId, _fromStation);
-	cur->next = 0;
-	cur->connected = 0;
+
 
 	if (cur == 0)//서 생긴 Statio을 만들어서 graph에 verticla 방향으로 넣는다.
 	{
+		cur = (struct Station*)malloc(sizeof(struct Station));
+		cur->stationId = (char *)malloc(strlen(_fromStation) + 1);
+		strcpy(cur->stationId, _fromStation);
+		cur->next = 0;
+		cur->connected = 0;
 		if (graph == 0)
 		{
-			graph == cur;
+			graph = cur;
 		}
 		else
 		{
@@ -111,33 +122,156 @@ void addEdgeToGraph(char* _fromStation, char * _toStation, int _distance)
 			temp->next = cur;
 		}
 	}
+
+
+	struct ConnectedStation *new_one = (struct ConnectedStation *)malloc(sizeof(struct ConnectedStation));
+	new_one->stationId = (char *)malloc(strlen(_toStation) + 1);
+	strcpy(new_one->stationId, _toStation);
+	new_one->distance = _distance;
+	new_one->next = 0;
+
+	// cur의 옆에 new_one을 붙인다.
+	struct ConnectedStation *temp = cur->connected;
+	if (temp == 0)
+	{
+		cur->connected = new_one;
+	}
 	else
 	{
-		//struct ConnectedStation * temp = cur
+		while (temp->next != 0)
+		{
+			temp = temp->next;
+		}
+		temp->next = new_one;
 	}
+
 }
+
 
 void showConnectedStation(char *_station)
 {
-	struct Station * temp = graph;
-	struct ConnectedStation * cur = 0;
-	while (temp->next != 0)
+	struct Station * temp = findStationFromGraph(_station);
+	if (temp == 0)
 	{
-	
-			if (strcmp(temp->stationId, _station) == 0)
-			{
-				cur = temp->connected;
-			}
-			temp = temp->next;
+		printf("No Connected Station\n");
+		return;
+	}
+	struct ConnectedStation * con = temp->connected;
+	while (con != 0)
+	{
+		printf("%s\n", con->stationId); \
+			con = con->next;
+
 	}
 
-	struct ConnectedStation * temptemp = cur;
-	while (temptemp->next != 0)
+}
+
+int howMAntVvertexs(void)
+{
+	int cnt = 0;
+	struct Station * temp = graph;
+
+	while (temp != 0)
 	{
-		printf("%s\n", temptemp->stationId);
+		cnt += 1;
+		temp = temp->next;
+	}
+
+	return cnt;
+}
+
+void initDijkstraTable(void)
+{
+	//vertex 개수를 파악 
+	int vcnt = howMAntVvertexs();
+	
+
+	//테이블 생성
+	dtable = (struct dijkstra*)malloc(sizeof(struct dijkstra)*vcnt);
+
+	// 초기화
+	struct Station * temp = graph;
+
+	for (int i = 0; i < vcnt; i++)
+	{
+
+		dtable[i].vertex=(char *)malloc(sizeof(temp->stationId) + 1);
+		strcpy(dtable[i].vertex, temp->stationId);
+		temp = temp->next;
+		dtable[i].found = 0;
+		dtable[i].dist = 200000000;
+		dtable[i].dist = 20000;
+		dtable[i].prev = (char *)malloc(50);
+		strcpy(dtable[i].prev, "0");
 	}
 }
 
+int findVertexIndexFromDTable(char* v)
+{
+	// vertex v에 해당하는 dijkstra의 위치를 반환
+int vcnt = howMAntVvertexs();
+
+	for (int i = 0; i < vcnt; i++)
+	{
+		if (dtable[i].vertex == v)
+		{
+			return i;
+		}
+	}
+}
+int nextShortestVertex(void)
+{
+	int vcnt = howMAntVvertexs();
+
+	int shortestDist = 20000000;
+	int shortestIdx = -1;
+
+	for (int i = 0; i < vcnt; i++)
+	{
+		if (dtable[i].found == 0 && dtable[i].dist < shortestDist)
+		{
+			shortestIdx = i;
+			shortestDist = dtable[i].dist;
+		}
+	}
+	return shortestIdx;
+}
+
+void runDijkstra(char *sVertex)
+{
+	int idx = findVertexIndexFromDTable(sVertex);
+	dtable[idx].dist = 0; // pseudo 의 두번째 스텝
+
+	while (1)
+	{
+		int i = nextShortestVertex();
+		if (i == -1)
+		{
+			//더 이상 최단거리 찾을 것이 없으므로 return 
+			return;
+		}
+		dtable[i].found = 1; //최단거리를 찾았음!!!!
+
+		// 5 . vertex[i] 의 neighbor vertex들에 대해서 dist 와 prev를 update(나를 통해 더 빠르게 갈수 있을 경우에만)
+		struct ConnectedStation * connectOnes = findStationFromGraph(dtable[i].vertex)->connected;
+
+		while (connectOnes != 0)
+		{
+			int neighborIdx = findVertexIndexFromDTable(connectOnes->stationId);
+
+			if (dtable[neighborIdx].dist > dtable[i].dist + connectOnes->distance) // 나를 통해가는것이 기존 보다 짧느냐를 확인
+			{
+				dtable[neighborIdx].dist = dtable[i].dist + connectOnes->distance; 
+				// 나를 통해서 더 빠르니깐 이웃의 weight는 내가됨
+				dtable[i].prev = (char *)malloc(sizeof(dtable[i].vertex) + 1);
+				strcpy(dtable[neighborIdx].prev, dtable[i].vertex);
+				//dtable[neighborIdx].prev = dtable[i].vertex;         
+				
+			}
+			connectOnes = connectOnes->next;
+		}
+	}
+}
 int main(void)
 {
 	//파일을 열러주는 파일이 열린 포인터
@@ -195,7 +329,14 @@ int main(void)
 	// 파일 닫기 --> 운영체제에서 열려있는 파일의 개수가 제한이 있음
 	fclose(f);
 
-	showConnectedStation((char *)"100");
+	showConnectedStation((char *)"759");
+	initDijkstraTable();
+	runDijkstra((char *)"759");
+	int c = howMAntVvertexs();
 
+	for (int i = 0; i < c; i++)
+	{
+		printf("%c %d %d %c \n", dtable[i].vertex, dtable[i].found, dtable[i].dist, dtable[i].prev);
+	}
 	return 0;
 }

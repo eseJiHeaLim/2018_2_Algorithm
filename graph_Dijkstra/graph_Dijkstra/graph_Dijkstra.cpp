@@ -235,11 +235,8 @@ void initDijkstraTable(void)
 		dtable[i].vertex = temp->v;
 		temp = temp->next;
 		dtable[i].found = 0;
-<<<<<<< HEAD
 		dtable[i].dist = 200000000;
-=======
 		dtable[i].dist = 20000;
->>>>>>> f70008991dea1936e026d119207cb456e5e5bcab
 		dtable[i].prev = 0;
 	}
 }
