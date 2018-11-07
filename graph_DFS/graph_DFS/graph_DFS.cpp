@@ -206,7 +206,7 @@ int main(void)
 	addEdge('D', 'F');
 
 
-	performDFS('C');
+	performDFS('A');
 
 
 	return 0;
