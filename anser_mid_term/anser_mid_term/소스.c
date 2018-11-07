@@ -162,7 +162,7 @@ void readDataFile(void)
 {
 	FILE *f = 0;
 
-	f = fopen("my2_data.txt", "rt");
+	f = fopen("mid_data.txt", "rt");
 
 	while (!feof(f))
 	{
@@ -709,10 +709,7 @@ void runDijkstra(int sVertex,int dVertex)
 			{
 				dtable[neighborIdx].dist = dtable[i].dist + connectOnes->w; 
 				dtable[neighborIdx].prev = dtable[i].vertex;    
-				if (dtable[i].vertex == dVertex)
-				{
-					return;
-				}
+			
 			}
 			connectOnes = connectOnes->next;
 		}
@@ -720,70 +717,15 @@ void runDijkstra(int sVertex,int dVertex)
 	
 }
 
-void Dijkstra_addToVisited(int v)
-{
-	struct vertex *new_one = (struct vertex *)malloc(sizeof(struct vertex));
-	new_one->v = v;
-	new_one->next = 0;
-
-	if (Dijkstra_visited == 0)
-	{
-		Dijkstra_visited = new_one;
-		return;
-	}
-	struct vertex * temp = Dijkstra_visited;
-
-	while (temp->next != 0)
-	{
-		temp = temp->next;
-	}
-	temp->next = new_one;
-	return;
-
-}
-
-int Dijkstra_checkVisite(int _v)
-{
-	struct vertex * temp = Dijkstra_visited;
-
-	while (temp != 0)
-	{
-		if (temp == 0)
-		{
-			return 0;
-		}
-		if (temp->v == _v)
-		{
-			return 1;
-		}
-		temp = temp->next;
-	}
-	return 0;
-}
 
 void performDijkstra(int sVertex, int dVertex)
 {
 	runDijkstra(sVertex,dVertex);
 	int c = howMAntVvertexs();
-	for (int i = 0; i < c; i++)
-	{
-		printf("%d %d %d %d \n", dtable[i].vertex, dtable[i].found, dtable[i].dist, dtable[i].prev);
-	}
 	int n = howMAntVvertexs();
-	int sumOfWeight = 0;
-	for (int i = 0; i <n; i++)
-	{
-		if (dtable[i].found == 1 && dtable[i].dist != 0)
-		{
-			if (Dijkstra_checkVisite(dtable[i].prev) == 0)
-			{
-				sumOfWeight = sumOfWeight + findWeight(dtable[i].prev);
-				Dijkstra_addToVisited(dtable[i].prev);
-			}
-		}
-	}
-	
-	printf("question4: %d\n", sumOfWeight);
+	int sumOfWeightIdx = findVertexIndexFromDTable(dVertex);
+
+	printf("question4: %d\n", dtable[sumOfWeightIdx].dist);
 }
 
 int main(void)
@@ -791,10 +733,11 @@ int main(void)
 	readDataFile();
 
 	processGraph();
-	printf("%d %d", NUM4_value[0], NUM4_value[1]);
+
 	performDFS(NUM1_value);
 	performBFS(NUM2_value);
 	performMST(NUM3_value);
+
 	performDijkstra(NUM4_value[0], NUM4_value[1]);
 
 	return 0;
