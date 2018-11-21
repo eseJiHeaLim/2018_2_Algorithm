@@ -1,3 +1,7 @@
 ﻿  make_file.c
-c:\github\2018_2_algorithm\huffman_decoding\huffman_decoding\make_file.c(102): warning C4716: 'main1': 값을 반환해야 합니다.
+c:\github\2018_2_algorithm\huffman_decoding\huffman_decoding\make_file.c(243): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+c:\github\2018_2_algorithm\huffman_decoding\huffman_decoding\make_file.c(248): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+c:\github\2018_2_algorithm\huffman_decoding\huffman_decoding\make_file.c(102): warning C4716: 'main2': 값을 반환해야 합니다.
+c:\github\2018_2_algorithm\huffman_decoding\huffman_decoding\make_file.c(209): warning C4716: 'main3': 값을 반환해야 합니다.
+c:\github\2018_2_algorithm\huffman_decoding\huffman_decoding\make_file.c(283): warning C4716: 'main92': 값을 반환해야 합니다.
   huffman_decoding.vcxproj -> C:\github\2018_2_Algorithm\huffman_decoding\Debug\huffman_decoding.exe

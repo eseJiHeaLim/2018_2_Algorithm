@@ -208,8 +208,16 @@ int main3()
 	fclose(ff);
 }
 
+/*
+char *a = "100"; // a의 허프만 코드는 10
+char *b = "11"; // b의 허프만 코드는 00
+char *c = "101";
+char *d = "0";
+*/
 
-int main(void)
+char * codeTable[4] = { "100","11","101","0" };
+
+int main92(void)
 {
 
 	//"aaabbb" 문자열을 파일에 기록
@@ -219,39 +227,117 @@ int main(void)
 	//-->10101000_0000
 
 	//문자열은 기본적으로 배열임
-	char *strToWrite = "aaabbb";
-	char *a = "10"; // a의 허프만 코드는 10
-	char *b = "00"; // b의 허프만 코드는 00
+	char *strToWrite = "abbccdccbba";
 
 	FILE *f = fopen("alice.bit", "wb");
 
+
+	// 비트 개수를 기록할 공간 (4byte )을 비워둔다
+	fseek(f, 4, SEEK_SET);
+
+	char ineByteBuffer = 0; //초기값은 0
+	int shiftCnt = 7; //얘가 0이면 1바이트가 채워진거임
+	int numOfBits = 0;
+
+	
 	for (int i = 0; i < strlen(strToWrite); i++)
 	{
 		char c = strToWrite[i];
+		char *code = codeTable[c - 'a'];
+		
+		for (int j = 0; j < strlen(code); j++)
+		{
+			//bitvalue는 쓰고하는 비트의 값
+			char bitValue = 0;
 
-		char *toWrite;
-		if (c == 'a')
-		{
-			strToWrite = a;
-		}
-		else
-		{
-			toWrite = b;
-		}
-		for (int j = 0; j < strlen(toWrite); j++)
-		{
+			//0일때는 아무것도 안해도 됨
+			if (code[j] == '1')
+			{
+				//맨 오른쪽이 자동으로 1로됨 
+				bitValue = 1;
+				bitValue = bitValue << shiftCnt;
+				ineByteBuffer = ineByteBuffer | bitValue;
+			}
+			shiftCnt -=1;
+			numOfBits += 1; //기록된 비트 개수를 저장
 
+			if (shiftCnt < 0)
+			{
+				fwrite(&ineByteBuffer, sizeof(char), 1, f);
+				shiftCnt = 7;
+				ineByteBuffer = 0;
+			}
 		}
 	}
 	
+	if (shiftCnt < 7)
+	{
+		fwrite(&ineByteBuffer, sizeof(char), 1, f);
+	}
+	//파일의 맨 처음으로 돌아가서
+	//비트의 개수를 쓴다
+	fseek(f, 0, SEEK_SET);
+	fwrite(&numOfBits, sizeof(int), 1, f);
 
 	fclose(f);
 }
 
 
 
+//비트스트림 파일을 열어서 , 파일 내용을 읽어내어 
+//코드 스트링을 출력
+int main(void)
+{
+	FILE *f = fopen("alice.bit", "rb");
 
+	int numOfBits = 0;
+	fread(&numOfBits, sizeof(int), 1, f);
 
+	printf("읽을 비트 수 : %d\n", numOfBits);
+
+	char andMask = 0x80;
+
+	while (1)
+	{
+		char readBuf;
+		int n = fread(&readBuf, sizeof(char), 1, f);
+		//파일에서 읽기 실패의 경우 도 생각
+		if (n <= 0)
+		{
+			break;
+
+		}
+
+		while (1)
+		{
+			if ((readBuf&andMask) == 0)
+			{
+				printf("0");
+			}
+			else
+			{
+				printf("1");
+			}
+
+			//마스크에 오른쪽 시프트하는것은  위험한 일이다
+			//andMask = andMask >> 1;
+			//하지만 이렇게 하면 됨
+			numOfBits -= 1;
+			andMask = (andMask >> 1) & 0x7f;
+			//readBuf = readBuf << 1;
+
+			if (andMask == 0||numOfBits<=0)
+			{
+				andMask = 0x80;
+				break;
+			}
+		}
+	}
+
+	fclose(f);
+
+	return 0;
+}
 
 
 
