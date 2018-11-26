@@ -10,15 +10,15 @@ int solutionCnt = 0;
 //스도쿠에 대한 정보를 저장하는 이차원배열
 //스도쿠에 대한 정보를 숫자배열의 형식으로 받아와야함
 int sudoku[SZ][SZ] = {
-	4,0,7,5,0,0,0,0,8,
-	0,5,0,7,0,0,4,0,9,
-	0,0,6,0,0,4,0,7,0,
-	9,0,0,6,0,0,2,4,3,
-	0,4,0,9,0,3,0,8,0,
-	7,3,1,0,0,2,0,0,5,
-	0,2,0,8,0,0,7,0,0,
-	3,0,9,0,0,6,0,5,0,
-	5,0,0,0,0,7,3,0,4
+	0,0,0,0,0,0,0,9,0,
+	8,0,2,9,7,0,0,0,0,
+	9,0,0,2,0,0,3,0,0,
+	0,0,0,0,4,9,0,5,7,
+	0,1,0,0,5,0,9,2,0,
+	0,7,9,1,0,0,0,0,0,
+	0,0,7,0,0,2,6,0,3,
+	0,0,0,0,3,8,2,0,0,
+	0,2,0,5,0,0,0,0,0
 };
 
 
@@ -29,7 +29,7 @@ void initReadOnlySudoku()
 {
 	//readOnlySudoku배열에 주어진 sudoku를 저장한다.
 	//내용을 바꾸다가도 원본으로 돌아가고 싶으면 이 함수로 원본으로 돌아간다
-	
+
 	//첫번W째 인수 : 카피 | 두번째 인수 :목적지 세번쨰 인수 |카피 내용 크기
 	memcpy(readOnlySudoku, sudoku, SZ*SZ * sizeof(int));
 }
@@ -46,7 +46,7 @@ void printSolution()
 		}
 		printf("\n");
 	}
-	
+
 }
 
 int isOK(int _r, int _c, int _value)
@@ -82,7 +82,7 @@ int isOK(int _r, int _c, int _value)
 	{
 		for (int j = region_col * 3; j <= region_col * 3 + 2; j++)
 		{
-			if (sudoku[i][j] == _value && i == _r && j != _c)
+			if (sudoku[i][j] == _value && i != _r && j != _c)
 			{
 				return 0;
 			}
@@ -98,7 +98,7 @@ int isOK(int _r, int _c, int _value)
 void checkNext(int _r, int _c)
 {
 	//좌표 (_r , _c)다음에 방문하여 숫자를 결정할 위치를 판단한다
-	
+
 	//예외적인 경우
 	//마지막 까지 온 경우
 	if (_r == (SZ - 1) && _c == (SZ - 1))
@@ -106,9 +106,9 @@ void checkNext(int _r, int _c)
 		printSolution();
 		return;
 	}
-	
+
 	_c++;
-	
+
 	if (_c == SZ)
 	{
 		_c = 0;
@@ -133,7 +133,7 @@ void solveSudoku(int _r, int _c)
 		//스도쿠가 채워져 있지 않음 
 		for (int i = 1; i <= 9; i++)
 		{
-			memcpy(&sudoku[_r][_c], &readOnlySudoku[_r][_c], sizeof(int)*SZ*SZ - sizeof(int)*(_r*SZ+_c));
+			memcpy(&sudoku[_r][_c], &readOnlySudoku[_r][_c], sizeof(int)*SZ*SZ - sizeof(int)*(_r*SZ + _c));
 			//좌표 (_r,_c)에 1부터 9까지 숫자를 하나씩 대입하여 체크
 			if (isOK(_r, _c, i) == 1)
 			{
