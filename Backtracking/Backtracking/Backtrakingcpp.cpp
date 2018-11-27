@@ -1,6 +1,6 @@
 #include<stdio.h>
 
-#define SZ 16
+#define SZ 4
 
 int chessBoard[SZ][SZ]; 
 

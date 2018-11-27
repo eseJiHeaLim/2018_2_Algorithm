@@ -30,7 +30,32 @@ struct Station
 
 struct Station * graph = 0;
 struct StationInfo * stations = 0;
+//방문 했던 노드를 저장하는 sll
+struct Station * vistit = 0;
+struct StationInfo * steak = 0;
 
+void push()
+{
+	struct Station * new_one = (struct Station*)malloc(sizeof(struct Station));
+
+}
+
+
+int countVertex()
+{
+	struct StationInfo * temp = stations;
+
+	int cnt = 1;
+	while (1)
+	{
+		if (temp->next == 0)
+		{
+			return cnt;
+		}
+		temp = temp->next;
+		cnt++;
+	}
+}
 
 void addStationNode(char * _stationId, char * _stationName, char * _lineNumber)
 {
@@ -90,6 +115,8 @@ void addEdgeToGraph(char* _fromStation, char* _toStation, int _distance)
 {
 
 	struct Station *cur = findStationFromGraph(_fromStation);
+
+
 
 	if (cur == 0) // 새로 Station을 만들어서 graph에 vertical 방향으로 붙여준다.
 	{
@@ -161,6 +188,38 @@ void showConnectedStation(char *_station)
 
 }
 
+void connectSameStation()
+{
+	struct StationInfo * temp = stations;
+	struct StationInfo * compare = temp->next;
+
+	printf("+++++++++++++++++++++++++++++++++++++++++++++=\n");
+	while (temp->next != 0)
+	{ 
+		/*
+			리셋 하렴 
+			리셋 중요함
+		*/
+		compare = temp->next;
+	
+		while (compare->next != 0)
+		{
+			if (strcmp(temp->stationName, compare->stationName) == 0)
+			{
+				addEdgeToGraph(temp->stationId, compare->stationId, 0);
+				addEdgeToGraph(compare->stationId, temp->stationId, 0);
+			}
+			compare = compare->next;
+		}
+		temp = temp->next;
+
+	}
+}
+
+void BFS()
+{
+	
+}
 
 
 int main(void)
@@ -198,46 +257,40 @@ int main(void)
 		//printf("%s", buf);
 		//버퍼 쓰고 지워줘야함
 		buf[0] = '\0';
-		while (!feof(f))
-		{
-			fgets(buf, 99, f);
-
-			char fromStation[50];
-			char toStation[50];
-			int distance;
-			sscanf(buf, "%s %s %d\n", fromStation, toStation, &distance);
-
-			printf("From %s ----> To %s : %d\n", fromStation, toStation, distance);
-
-			addEdgeToGraph(fromStation, toStation, distance);
-
-			buf[0] = '\0';
-		}
-	}
-	//최대 읽을 수있는 글자의 양 99개 --> 한줄씩 읽어 들일때 
+		//최대 읽을 수있는 글자의 양 99개 --> 한줄씩 읽어 들일때 
 	//fgets(buf, 99, f);
+		
+	}
 
+
+	while (!feof(f))
+	{
+		fgets(buf, 99, f);
+
+		char fromStation[50];
+		char toStation[50];
+		int distance;
+		sscanf(buf, "%s %s %d\n", fromStation, toStation, &distance);
+
+		//printf("From %s ----> To %s : %d\n", fromStation, toStation, distance);
+
+		addEdgeToGraph(fromStation, toStation, distance);
+
+		buf[0] = '\0';
+	}
 
 
 	// 파일 닫기 --> 운영체제에서 열려있는 파일의 개수가 제한이 있음
 	fclose(f);
 
 	printf("\n");
-
-	//집앞 단대오거리
-	showConnectedStation((char *)"823");
-
-	printf("------------------------------------------\n");
-	//모란역
-	showConnectedStation((char *)"826");
-
-	printf("------------------------------------------\n");
-	//야탑역
-	showConnectedStation((char *)"K226");
-
-	printf("------------------------------------------\n");
+	connectSameStation();
+	
+	printf("-------------------------- ----------------\n");
 	//부평역
 	showConnectedStation((char *)"I120");
+
+	printf("%d\n", countVertex());
 
 	return 0;
 }
