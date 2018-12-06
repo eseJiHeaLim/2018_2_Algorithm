@@ -3,6 +3,9 @@
 #include<stdlib.h>
 #include<string.h>
 
+
+struct Station* findStationFromGraph(char *_fromStation);
+
 struct StationInfo
 {
 	// char stationId[100] --> 이렇게하면 100이 넘어가는 아이를 받아 들일수가 없음
@@ -28,18 +31,142 @@ struct Station
 	struct Station * next;
 };
 
+struct dijkstra {
+	char * my_id;
+	int final;
+	int dist;
+	char * prev;
+};
+
+
 struct Station * graph = 0;
 struct StationInfo * stations = 0;
 //방문 했던 노드를 저장하는 sll
-struct Station * vistit = 0;
-struct StationInfo * steak = 0;
+struct Station * vistited = 0;
+struct Station * steak = 0;
 
-void push()
+void push(char* _stationID)
 {
 	struct Station * new_one = (struct Station*)malloc(sizeof(struct Station));
-
+	new_one->connected = 0;
+	new_one->next = 0;
+	new_one->stationId = (char *)malloc(strlen(_stationID)+1);
+	strcpy(new_one->stationId, _stationID);
+	if (steak == 0)
+	{
+		steak = new_one;
+		return;
+	}
+	else
+	{
+		new_one->next = steak;
+		steak = new_one;
+		return;
+	}
 }
 
+char * pop()
+{
+	struct Station * temp = steak;
+	steak = steak->next;
+	return temp->stationId;
+}
+
+void addVistied(char * _visit)
+{
+	struct Station  * new_one = (struct Station*)malloc(sizeof(struct Station));
+	new_one->connected = 0;
+	new_one->next = 0;
+	new_one->stationId = (char *)malloc(strlen(_visit)+1);
+	strcpy(new_one->stationId, _visit);
+
+	if (vistited == 0)
+	{
+		vistited = new_one;
+		return;
+	}
+	else
+	{
+		new_one->next = steak;
+		steak = new_one;
+		return;
+	}
+}
+
+int checkVisit(char* _visit)
+{
+	struct Station *temp = vistited;
+	char * compare = (char *)malloc(strlen(_visit) + 1);
+	strcpy(compare, _visit);
+
+	while (temp!=0)
+	{
+		if (temp->next == 0)
+		{
+			return 0;
+		}
+		if (strcmp(temp->stationId, compare) == 0)
+		{
+			return 1;
+		}
+		temp = temp->next;
+	}
+	return 0;
+}
+
+
+void DFS(char * _start)
+{
+	char * src = 0;
+	char * v = 0;
+	src=(char *)malloc(strlen(_start) + 1);
+	strcpy(src, _start);
+
+	push(src);
+
+	while (1)
+	{
+		char * temp = pop();
+		v = (char *)malloc(strlen(temp) + 1);
+		strcpy(v, temp);
+
+		if (v == 0)
+		{
+			break;
+		}
+		if (checkVisit(v) == 1)
+		{
+			continue;
+		}
+		
+			addVistied(v);
+			printf("%s\n", v);
+
+
+			struct ConnectedStation * _temp = findStationFromGraph(v)->connected;
+			while (1)
+			{
+				if (_temp == 0)
+				{
+					break;
+				}
+				
+				char * tempdata = (char *)malloc(sizeof(_temp->stationId) + 1);
+				strcpy(tempdata, _temp->stationId);
+
+				if (checkVisit(tempdata) == 1)
+				{
+					_temp = _temp->next;
+				}
+				else
+				{
+					push(tempdata);
+					_temp = _temp->next;
+				}
+				
+			}	
+	}
+}
 
 int countVertex()
 {
@@ -216,12 +343,6 @@ void connectSameStation()
 	}
 }
 
-void BFS()
-{
-	
-}
-
-
 int main(void)
 {
 	//파일을 열러주는 파일이 열린 포인터
@@ -291,6 +412,9 @@ int main(void)
 	showConnectedStation((char *)"I120");
 
 	printf("%d\n", countVertex());
+
+
+	DFS((char *)"100");
 
 	return 0;
 }

@@ -1,0 +1,4 @@
+﻿bishop2.obj : error LNK2005: _checkOk이(가) bishop.obj에 이미 정의되어 있습니다.
+bishop2.obj : error LNK2005: _main이(가) bishop.obj에 이미 정의되어 있습니다.
+bishop2.obj : error LNK2005: _cheese이(가) bishop.obj에 이미 정의되어 있습니다.
+C:\github\2018_2_Algorithm\backtracking_bishop\Debug\backtracking_bishop.exe : fatal error LNK1169: 여러 번 정의된 기호가 있습니다.
